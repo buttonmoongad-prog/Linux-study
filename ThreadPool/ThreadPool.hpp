@@ -29,7 +29,6 @@ namespace ThreadPoolModule
             LOG(Level::Debug) << "唤醒一个休眠线程";
         }
         
-    public:
         ThreadPool(const int num = defaultnum): _isrunning(false), _sleepnums(0)
         {
             LockGraud lockgraud(_mutex);
@@ -53,6 +52,26 @@ namespace ThreadPoolModule
                 thread.Start();
                 LOG(Level::Info) << "启动线程：" << thread.GetName() << " 成功";
             }
+        }
+
+
+    public:
+        ThreadPool(const ThreadPool& x) = delete;
+        ThreadPool operator=(const ThreadPool& x) = delete; 
+
+        static ThreadPool<T>* GetInstance()
+        {
+            if (inic == nullptr)
+            {
+                LockGraud lockgraud(_lock);
+                if (inic == nullptr)
+                {
+                    LOG(Level::Debug) << "创建单例";
+                    inic = new ThreadPool<T>();
+                    inic->Start();
+                }
+            }
+            return inic;
         }
 
         void Stop()
@@ -116,5 +135,12 @@ namespace ThreadPoolModule
         int _sleepnums;
         Mutex _mutex;
         Cond _cond;
+
+        static ThreadPool<T>* inic;
+        static Mutex _lock;
     };
+    template<class T>
+    ThreadPool<T>* ThreadPool<T>::inic = nullptr;
+    template<class T>
+    Mutex ThreadPool<T>::_lock;
 }
