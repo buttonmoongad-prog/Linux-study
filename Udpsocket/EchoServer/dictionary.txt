@@ -1,0 +1,17 @@
+hello: 你好
+apple: 苹果
+banana: 香蕉
+today: 今天
+thank: 感谢
+dog: 狗
+strong: 强壮的
+people: 人们
+man: 男人
+woman: 女人
+water: 水
+image: 梦
+hair: 头发
+hand: 手
+pen: 笔
+book: 书
+head: 头

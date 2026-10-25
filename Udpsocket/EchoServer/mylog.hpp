@@ -159,7 +159,7 @@ namespace LogModule
                     << '[' << LevelToString(_level) << ']'
                     << '[' << _pid << ']'
                     << '[' << _filename << ']'
-                    << '[' << _linenum << ']';
+                    << '[' << _linenum << ']' << '-';
                 _logfrontmessage = ss.str();
             }
 
@@ -167,7 +167,7 @@ namespace LogModule
             Log& operator<<(const T& message)
             {
                 stringstream ss;
-                ss << '-' << message;
+                ss << message;
                 _logfrontmessage += ss.str();
                 return *this;
             }

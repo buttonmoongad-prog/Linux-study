@@ -6,16 +6,20 @@
 #include <arpa/inet.h>
 #include "mylog.hpp"
 #include <string.h>
+#include "InetAddr.hpp"
+#include <functional>
 using namespace LogModule;
 using namespace std;
+using fun_c = function<string (const string&, InetAddr&)>;
 
 class EchoServer
 {
 public:
-    EchoServer(uint16_t& port)
+    EchoServer(uint16_t& port, fun_c func)
         :_port(port),
         _sockfd(-1),
-        _isrunning(false)
+        _isrunning(false),
+        _func(func)
     {
     }
 
@@ -62,10 +66,15 @@ public:
             if (n > 0)
             {
                 buffer[n] = 0;
-                LOG(Level::Info) << buffer;
-                string echo_string = "client say#";
-                echo_string += buffer;
-                int s = sendto(_sockfd, echo_string.c_str(), echo_string.size(), 0, (struct sockaddr*)&peer, len);
+                // LOG(Level::Info) << buffer;
+                // string echo_string = "client say#";
+                // echo_string += buffer;
+
+                InetAddr client(peer);
+
+                string result = _func(buffer, client);
+
+                int s = sendto(_sockfd, result.c_str(), result.size(), 0, (struct sockaddr*)&peer, len);
             }
         }
     }
@@ -74,4 +83,5 @@ private:
     int _sockfd;
     uint16_t _port;
     bool _isrunning;
+    fun_c _func;
 };

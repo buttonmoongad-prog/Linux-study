@@ -1,4 +1,5 @@
 #include "UdpServer.hpp"
+#include "Dict.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -8,7 +9,11 @@ int main(int argc, char* argv[])
         return 1;
     }
     uint16_t port = stoi(argv[1]);
-    unique_ptr<EchoServer> server = make_unique<EchoServer>(port);
+    Dict dict;
+    dict.Load();
+    unique_ptr<EchoServer> server = make_unique<EchoServer>(port, [&dict](const string& word, InetAddr& cli)->string{
+        return dict.Translate(word, cli);
+    });
     server->Init();
     server->Start(); 
 
